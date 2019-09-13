@@ -10,7 +10,29 @@ namespace TrackerLibrary.DataAccess
     public class TextConnector : IDataConnection
     {
         private const string PrizesFile = "PrizesModels.csv";
+        private const string PeopleFile = "PeopleModels.csv";
 
+        public PeopleModel CreatePeople(PeopleModel model)
+        {
+            List<PeopleModel> people = PeopleFile.FullFilePath().LoadFile().ConvertToPeopleModel();
+
+            int currentId = 1;
+
+
+            if (people.Count > 0)
+            {
+                currentId = people.OrderByDescending(x => x.Id).First().Id + 1;
+            }
+
+
+            model.Id = currentId;
+            people.Add(model);
+
+            people.SaveToPeopleFile(PeopleFile);
+
+            return model;
+
+        }
 
         public PrizeModel CreatePrize(PrizeModel model)
         {

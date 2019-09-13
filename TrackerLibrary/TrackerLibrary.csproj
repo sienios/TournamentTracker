@@ -53,7 +53,7 @@
     <Compile Include="GlobalConfig.cs" />
     <Compile Include="Model\MatchupEntryModel.cs" />
     <Compile Include="Model\MatchupModel.cs" />
-    <Compile Include="Model\PersonModel.cs" />
+    <Compile Include="Model\PeopleModel.cs" />
     <Compile Include="Model\PrizeModel.cs" />
     <Compile Include="Model\TeamModel.cs" />
     <Compile Include="Model\TournamentModel.cs" />
