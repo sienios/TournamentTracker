@@ -9,8 +9,11 @@ namespace TrackerLibrary.DataAccess
 {
     public class TextConnector : IDataConnection
     {
+
+
         private const string PrizesFile = "PrizesModels.csv";
         private const string PeopleFile = "PeopleModels.csv";
+        private const string TeamFile = "TeamModels.csv";
 
         public PeopleModel CreatePeople(PeopleModel model)
         {
@@ -54,6 +57,25 @@ namespace TrackerLibrary.DataAccess
 
             return model;
 
+        }
+
+        public TeamModel CreateTeam(TeamModel model)
+        {
+            List<TeamModel> teams = TeamFile.FullFilePath().LoadFile().ConvertToTeamModels(PeopleFile);
+            int currentId = 1;
+            if (teams.Count>0)
+            {
+                currentId = teams.OrderByDescending(x => x.Id).First().Id + 1;
+            }
+            teams.Add(model);
+
+            teams.SaveToTeamFile(TeamFile);
+            return model;
+        }
+
+        public List<PeopleModel> GetPeople_All()
+        {
+            return PeopleFile.FullFilePath().LoadFile().ConvertToPeopleModel();
         }
     }
 }

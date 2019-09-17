@@ -9,9 +9,11 @@ namespace TrackerLibrary.DataAccess
 {
     public class SqlConnector : IDataConnection
     {
+        private const string db = "connTournaments";
+
         public PeopleModel CreatePeople(PeopleModel model)
         {
-            using (IDbConnection connection = new SqlConnection(GlobalConfig.ConnString("connTournaments")))
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.ConnString(db)))
             {
                 var p = new DynamicParameters();
                 p.Add("@FirstName", model.FirstName);
@@ -37,7 +39,7 @@ namespace TrackerLibrary.DataAccess
 
         public PrizeModel CreatePrize(PrizeModel model)
         {
-            using (IDbConnection connection = new SqlConnection(GlobalConfig.ConnString("connTournaments")))
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.ConnString(db)))
             {
                 var p = new DynamicParameters();
                 p.Add("@PlaceNumber",model.PlaceNumber);
@@ -56,10 +58,37 @@ namespace TrackerLibrary.DataAccess
                
         }
 
+        public TeamModel CreateTeam(TeamModel model)
+        {
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.ConnString(db)))
+            {
+                var p = new DynamicParameters();
+                p.Add("@TeamName", model.TeamName); 
+                p.Add("@id", 0, dbType: DbType.Int32, direction: ParameterDirection.Output);
+
+                connection.Execute("dbo.spTeams_Insert", p, commandType: CommandType.StoredProcedure);
+
+                model.Id = p.Get<int>("@id");
+
+                foreach (PeopleModel tm in model.TeamMembers )
+                {
+                    p = new DynamicParameters();
+                    p.Add("@TeamId", model.Id);
+                    p.Add("@PersonId", tm.Id);
+       
+                    connection.Execute("dbo.spTeamMembers_Insert", p, commandType: CommandType.StoredProcedure);
+
+                }
+
+                return model;
+
+            }
+        }
+
         public List<PeopleModel> GetPeople_All()
         {
             List<PeopleModel> output; 
-            using (IDbConnection connection = new SqlConnection(GlobalConfig.ConnString("Tournaments")))
+            using (IDbConnection connection = new SqlConnection(GlobalConfig.ConnString(db)))
             {
                 output = connection.Query<PeopleModel>("dbo.spPeople_GetAll").ToList();
             }

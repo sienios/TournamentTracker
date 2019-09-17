@@ -14,7 +14,7 @@ namespace TrackerUI
 {
     public partial class CreateTeamForm : Form
     {
-        private List<PeopleModel> availableTeamMembers = new List<PeopleModel>();
+        private List<PeopleModel> availableTeamMembers = GlobalConfig.Connection.GetPeople_All();
         private List<PeopleModel> selectedTeamMembers = new List<PeopleModel>();
         public CreateTeamForm()
         {
@@ -22,6 +22,7 @@ namespace TrackerUI
          //   CreateSampleData();
             WireUpList();
         }
+
 
         private void CreateSampleData()
         {
@@ -33,11 +34,14 @@ namespace TrackerUI
 
         private void WireUpList()
         {
+            selectTeamMemberComboBox.DataSource = null; 
             selectTeamMemberComboBox.DataSource = availableTeamMembers;
             selectTeamMemberComboBox.DisplayMember = "FullName";
 
+            teamMembersListBox.DataSource = null;
             teamMembersListBox.DataSource = selectedTeamMembers;
             teamMembersListBox.DisplayMember = "FullName";
+
         }
 
         private void CreateMemberButton_Click(object sender, EventArgs e)
@@ -50,7 +54,11 @@ namespace TrackerUI
                 personModel.EmailAddress = emailTextBox.Text;
                 personModel.Phone = phoneTextBox.Text;
 
-                GlobalConfig.Connection.CreatePeople(personModel);
+                personModel = GlobalConfig.Connection.CreatePeople(personModel);
+
+                selectedTeamMembers.Add(personModel);
+                WireUpList();
+
 
                 firstNameTextBoxOne.Text = "";
                 lastNameTextBox.Text = "";
@@ -92,6 +100,54 @@ namespace TrackerUI
 
 
             return true;
+        }
+
+        private void AdddTeamMemberButton_Click(object sender, EventArgs e)
+        {
+            PeopleModel p =(PeopleModel)selectTeamMemberComboBox.SelectedItem;
+
+            if (p != null)
+            {
+                availableTeamMembers.Remove(p);
+                selectedTeamMembers.Add(p);
+
+                selectTeamMemberComboBox.Refresh();
+                teamMembersListBox.Refresh();
+
+                WireUpList(); 
+            }
+
+          
+        }
+
+        private void DeleteSelectedMembersButton_Click(object sender, EventArgs e)
+        {
+
+            PeopleModel p = (PeopleModel)teamMembersListBox.SelectedItem;
+
+            if (p != null )
+            {
+                availableTeamMembers.Add(p);
+                selectedTeamMembers.Remove(p);
+
+                selectTeamMemberComboBox.Refresh();
+                teamMembersListBox.Refresh();
+
+                WireUpList();  
+            }
+
+        }
+
+        private void CreateTeamButton_Click(object sender, EventArgs e)
+        {
+            TeamModel t = new TeamModel();
+
+            t.TeamName = teamNameTextBoxOne.Text;
+            t.TeamMembers = selectedTeamMembers;
+
+            GlobalConfig.Connection.CreateTeam(t);
+
+            //TODO - if we arent closing this form after creation, reset the form.
         }
     }
 }
