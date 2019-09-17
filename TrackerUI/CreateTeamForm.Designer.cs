@@ -198,7 +198,7 @@
             this.lastNameTextBox.Name = "lastNameTextBox";
             this.lastNameTextBox.Size = new System.Drawing.Size(193, 43);
             this.lastNameTextBox.TabIndex = 15;
-            this.lastNameTextBox.TextChanged += new System.EventHandler(this.TextBox1_TextChanged);
+
             // 
             // lastNameLabel
             // 
@@ -210,7 +210,7 @@
             this.lastNameLabel.Size = new System.Drawing.Size(142, 37);
             this.lastNameLabel.TabIndex = 14;
             this.lastNameLabel.Text = "Last Name";
-            this.lastNameLabel.Click += new System.EventHandler(this.Label1_Click);
+
             // 
             // firstNameTextBoxOne
             // 
@@ -232,7 +232,7 @@
             this.firstNameLabel.Size = new System.Drawing.Size(144, 37);
             this.firstNameLabel.TabIndex = 12;
             this.firstNameLabel.Text = "First Name";
-            this.firstNameLabel.Click += new System.EventHandler(this.TeamOneScoreLabel_Click);
+
             // 
             // teamMembersListBox
             // 
